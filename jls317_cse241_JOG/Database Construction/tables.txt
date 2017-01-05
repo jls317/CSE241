@@ -1,0 +1,88 @@
+create table customer(
+ID varchar(5) not null, 
+first_name varchar(15) not null, 
+last_name varchar(20) not null, 
+street_address varchar(25), 
+city varchar(15), 
+state varchar(2), 
+zip numeric(5) check(zip>0), 
+country varchar(15), 
+primary key (ID));
+
+create table account(
+AcctID varchar(5) not null,
+ID varchar(5) not null,
+plan_ID varchar(5) not null,
+phone_num varchar(10) not null,
+primary key (AcctID),
+foreign key (ID) references customer
+	on delete cascade);
+
+create table phone(
+ID varchar (5) not null,
+MEID varchar(14) not null,
+storeID varchar(5),
+manufacturer varchar(12),
+model varchar(12),
+primary key (MEID),
+foreign key (ID) references customer);
+
+
+create table provides(
+phone_num varchar (10) not null,
+AcctID varchar(5) not null,
+MEID varchar(14) not null,
+start_date varchar(8),
+end_date varchar(8),
+primary key (phone_num),
+foreign key (AcctID) references account,
+foreign key (MEID) references phone);
+
+create table owns(
+ID varchar(5) not null,
+MEID varchar(14) not null,
+primary key(ID, MEID),
+foreign key(ID) references customer,
+foreign key(MEID) references phone);
+
+
+create table store(
+store_ID varchar(5) not null,
+location varchar(15),
+primary key (store_ID));
+
+
+create table products(
+product_ID varchar(12),
+store_ID varchar(5),
+description varchar(20),
+stock varchar(4),
+capacity varchar(5),
+primary key (product_ID, store_ID));
+
+
+create table plan(
+AcctID varchar(5) not null,
+plan_ID varchar(5) not null,
+fixed_min numeric(2,2) check (fixed_min>=0 and fixed_min<=10),
+fixed_text numeric(2,2) check (fixed_text>=0 and fixed_text<=10),
+fixed_data numeric(2,2) check (fixed_data>=0 and fixed_data<=10),
+UUF_month numeric(3,2) check (UUF_month>=20 and UUF_month<=200),
+UUU_month numeric(3,2) check (UUU_month>=20 and UUU_month<=200),
+FUU_month numeric(3,2) check (FUU_month>=20 and FUU_month<=200),
+primary key(AcctID, plan_ID));
+
+
+create table services(
+Service_ID varchar(5) not null,
+AcctID varchar(5) not null,
+source_num varchar(10),
+destination_num varchar(10),
+text_time varchar(23),
+text_size numeric(6,2) check (text_size >=0 and text_size <= 2000),
+call_start_time varchar(23),
+call_end_time varchar(23),
+data_bytes numeric(6,2) check (data_bytes>=0),
+primary key(Service_ID, AcctID),
+foreign key(AcctID) references account);
+
